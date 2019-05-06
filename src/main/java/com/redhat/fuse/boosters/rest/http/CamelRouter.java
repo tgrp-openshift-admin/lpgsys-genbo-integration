@@ -24,14 +24,17 @@ public class CamelRouter extends RouteBuilder {
                 .apiProperty("api.path", "/")
                 .apiProperty("host", "")
                 .apiContextRouteId("doc-api")
+                .enableCORS(true)
+                .corsAllowCredentials(true)
+                .corsHeaderProperty("Access-Control-Allow-Origin","*")
             .component("servlet")
             .bindingMode(RestBindingMode.json);
         
         rest("/shinsei").description("Shinsei Veirify")
             .post("/verify").type(com.tokaicom.genbo.Shinsei.class).outType(com.tokaicom.genbo.Result.class)
-                .route().routeId("greeting-api")
+                .route().routeId("verify-api")
                 .to("direct:shinseiVerifyImpl")
-                .setHeader("Access-Control-Allow-Origin",constant("*"));
+                .setHeader("Origin",constant("*"));
 
         from("direct:shinseiVerifyImpl").description("Shinsei Verify REST service implementation route")
             .streamCaching()
